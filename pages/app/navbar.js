@@ -31,31 +31,26 @@ const NavBar = (name) => {
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
-    const unsubscribeFromSnapshot = () =>
-      db
-        .collection("users")
-        .doc(localStorage.getItem("id"))
-        .get()
-        .then((val) => {
-          setRows([]);
-          val.get("companies").forEach((element) => {
-            db.collection("companies")
-              .doc(element)
-              .onSnapshot((snap) => {
-                let data = snap.data();
-                if (val.get("isActive") == snap.id) {
-                  setNamer(data.name + " - ");
-                }
-                setRows((opt) => [
-                  ...opt,
-                  <option value={snap.id}>{data.name}</option>,
-                ]);
-              });
-          });
+    db.collection("users")
+      .doc(localStorage.getItem("id"))
+      .get()
+      .then((val) => {
+        setRows([]);
+        val.get("companies").forEach((element) => {
+          db.collection("companies")
+            .doc(element)
+            .onSnapshot((snap) => {
+              let data = snap.data();
+              if (val.get("isActive") == snap.id) {
+                setNamer(data.name + " - ");
+              }
+              setRows((opt) => [
+                ...opt,
+                <option value={snap.id}>{data.name}</option>,
+              ]);
+            });
         });
-    return () => {
-      unsubscribeFromSnapshot();
-    };
+      });
   }, [db]);
 
   const RegCompany = (e) => {

@@ -20,33 +20,28 @@ const Main = () => {
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
-    const unsubscribeFromSnapshot = () =>
-      db
-        .collection("users")
-        .doc(localStorage.getItem("id"))
-        .get()
-        .then((val) => {
-          setRows([]);
-          val.get("companies").forEach((element) => {
-            db.collection("companies")
-              .doc(element)
-              .onSnapshot((valo) => {
-                setRows((prevRows) => [
-                  ...prevRows,
-                  Comp(
-                    element,
-                    valo.data().name,
-                    valo.data().executed,
-                    //valo.data().engagement,
-                    element == val.get("isActive")
-                  ),
-                ]);
-              });
-          });
+    db.collection("users")
+      .doc(localStorage.getItem("id"))
+      .get()
+      .then((val) => {
+        setRows([]);
+        val.get("companies").forEach((element) => {
+          db.collection("companies")
+            .doc(element)
+            .onSnapshot((valo) => {
+              setRows((prevRows) => [
+                ...prevRows,
+                Comp(
+                  element,
+                  valo.data().name,
+                  valo.data().executed,
+                  //valo.data().engagement,
+                  element == val.get("isActive")
+                ),
+              ]);
+            });
         });
-    return () => {
-      unsubscribeFromSnapshot();
-    };
+      });
   }, [db]);
   return (
     <Flex
