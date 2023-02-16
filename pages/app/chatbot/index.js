@@ -76,7 +76,7 @@ const Chatbot = () => {
           .onSnapshot((snap) => {
             let data = snap.data();
             if (file != null) {
-              const url = URL.createObjectURL(file);
+              //const url = URL.createObjectURL(file);
               const imgname = file.name;
               if (data.brandlogo != "") {
                 storage

@@ -10,6 +10,8 @@ const Prompt = () => {
   const [ques, setQues] = useState("");
   const [ans, setAns] = useState("");
   const [rows, setRows] = useState([]);
+  const [num, setNum] = useState(0);
+  const [numDelete, setNumDelete] = useState(0);
 
   useEffect(() => {
     db.collection("users")
@@ -24,7 +26,7 @@ const Prompt = () => {
               setRows([]);
               JSON.parse(data.prompts)
                 .reverse()
-                .forEach((element) => {
+                .forEach(function (element, i) {
                   setRows((prevRows) => [
                     ...prevRows,
                     <Flex
@@ -46,8 +48,22 @@ const Prompt = () => {
                         readOnly={true}
                         value={element[1]}
                       />
-                      <Button colorScheme={"blue"}>Edit</Button>
-                      <Button colorScheme={"red"}>Delete</Button>
+                      <Button
+                        colorScheme={"blue"}
+                        onClick={() => {
+                          setNum(JSON.parse(data.prompts).length - 1 - i);
+                        }}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        colorScheme={"red"}
+                        onClick={() => {
+                          setNumDelete(JSON.parse(data.prompts).length - 1 - i);
+                        }}
+                      >
+                        Delete
+                      </Button>
                     </Flex>,
                   ]);
                 });
