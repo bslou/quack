@@ -74,7 +74,7 @@ const NavBar = (name) => {
               display: "yes",
               devices: "Both on desktop and mobile devices",
               bgcolor: "#ff0000",
-              onlinestatus: "We will reply immediately...",
+              username: "Jack",
               widgetpos: "right",
               buttonlabel: "no",
               labeltext: "Welcome",
@@ -94,6 +94,7 @@ const NavBar = (name) => {
             });
           setNom("");
           onClose();
+          window.location.reload();
         } else {
           toast({
             title: "Company name already exists within your companies",

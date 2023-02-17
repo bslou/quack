@@ -68,7 +68,12 @@ const Main = () => {
                     width={"33%"}
                   >
                     <Link
-                      onClick={() => router.push("/app/chatbot")}
+                      onClick={() => {
+                        db.collection("users")
+                          .doc(localStorage.getItem("id"))
+                          .update({ isActive: element });
+                        router.push("/app/chatbot");
+                      }}
                       fontSize={"11pt"}
                       fontWeight={700}
                       color={"black"}

@@ -32,7 +32,7 @@ import NavBar from "../navbar";
 
 const Chatbot = () => {
   const [label, setLabel] = useState(false);
-  const [statu, setStatu] = useState("We will reply immediately...");
+  const [name, setName] = useState("Jack");
   const [lob, setLob] = useState("");
   const [value, setValue] = useState("right");
   const [file, setFile] = useState(null);
@@ -40,6 +40,8 @@ const Chatbot = () => {
   const [opt, setOpt] = useState("Both on desktop and mobile devices");
   const [bgcolor, setBgcolor] = useState("ff0000");
   const [sound, setSound] = useState(false);
+
+  const [open, setOpen] = useState(false);
 
   const toast = useToast();
 
@@ -58,7 +60,7 @@ const Chatbot = () => {
             setSound(data.widgetsounds == "yes" ? true : false);
             setLabel(data.buttonlabel == "yes" ? true : false);
             setLob(data.labeltext);
-            setStatu(data.onlinestatus);
+            setName(data.username);
             setValue(data.widgetpos);
             if (data.brandlogo != "") {
               storage
@@ -121,7 +123,7 @@ const Chatbot = () => {
                   bgcolor: bgcolor,
                   devices: opt,
                   labeltext: lob,
-                  onlinestatus: statu,
+                  username: name,
                   widgetpos: value,
                   buttonlabel: label == true ? "yes" : "no",
                   brandlogo: `/images/${imgname}`,
@@ -135,7 +137,7 @@ const Chatbot = () => {
                   bgcolor: bgcolor,
                   devices: opt,
                   labeltext: lob,
-                  onlinestatus: statu,
+                  username: name,
                   widgetpos: value,
                   buttonlabel: label == true ? "yes" : "no",
                 });
@@ -256,12 +258,12 @@ const Chatbot = () => {
               width={"100%"}
               height={9}
             >
-              <Text width={"30%"}>Online Status:</Text>
+              <Text width={"30%"}>Name:</Text>
               <Input
                 width={"65%"}
-                value={statu}
-                placeholder={"Ex: We will reply immediately..."}
-                onChange={(e) => setStatu(e.target.value)}
+                value={name}
+                placeholder={"Jack"}
+                onChange={(e) => setName(e.target.value)}
                 required
               />
             </Flex>
@@ -393,7 +395,62 @@ const Chatbot = () => {
         backgroundColor={"white"}
         borderRadius={3}
         boxShadow={"0 2px 5px #bcbcbc"}
-      ></Flex>
+      >
+        {widget ? (
+          <>
+            {label ? (
+              <Flex
+                backgroundColor={"white"}
+                paddingLeft={3}
+                paddingRight={3}
+                paddingTop={1}
+                paddingBottom={1}
+                borderRadius={15}
+                boxShadow={"0 0 5px #ababab"}
+                maxWidth={100}
+                alignItems={"center"}
+                justifyContent={"center"}
+                position={"absolute"}
+                bottom={10}
+                right={value == "right" ? 105 : null}
+                left={value == "left" ? 105 : null}
+              >
+                <Text color={"black"}>{lob}</Text>
+              </Flex>
+            ) : null}
+            <Button
+              width={75}
+              height={75}
+              position={"absolute"}
+              bottom={5}
+              right={value == "right" ? 5 : null}
+              left={value == "left" ? 5 : null}
+              borderRadius={"50%"}
+              backgroundColor={bgcolor}
+              _hover={{
+                opacity: 0.9,
+              }}
+              colorScheme={"transparent"}
+            >
+              {file !== null ? (
+                <img
+                  src={file}
+                  layout="fill"
+                  objectFit="cover"
+                  objectPosition="center"
+                />
+              ) : (
+                <Image
+                  src={"/assets/mail.png"}
+                  alt={"mail"}
+                  width={50}
+                  height={50}
+                />
+              )}
+            </Button>
+          </>
+        ) : null}
+      </Flex>
     </Flex>
   );
 };
