@@ -46,7 +46,12 @@ const NavBar = (name) => {
               }
               setRows((opt) => [
                 ...opt,
-                <option value={snap.id}>{data.name}</option>,
+                <option
+                  selected={val.get("isActive") == element}
+                  value={snap.id}
+                >
+                  {data.name}
+                </option>,
               ]);
             });
         });
@@ -185,8 +190,11 @@ const NavBar = (name) => {
               }}
               onChange={(e) => {
                 db.collection("users")
-                  .doc(id)
-                  .update({ isActive: e.target.value });
+                  .doc(localStorage.getItem("id"))
+                  .update({ isActive: e.target.value })
+                  .then((e) => {
+                    window.location.reload();
+                  });
               }}
             >
               {rows}

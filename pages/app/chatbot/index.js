@@ -12,6 +12,13 @@ import {
   Text,
   Icon,
   useToast,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
 } from "@chakra-ui/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -375,6 +382,18 @@ const Chatbot = () => {
           </Flex>
         </form>
       </Flex>
+      <Flex
+        width={"42.5vw"}
+        position={"absolute"}
+        height={"85vh"}
+        top={20}
+        right={65}
+        direction={"column"}
+        padding={5}
+        backgroundColor={"white"}
+        borderRadius={3}
+        boxShadow={"0 2px 5px #bcbcbc"}
+      ></Flex>
     </Flex>
   );
 };

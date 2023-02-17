@@ -1,10 +1,29 @@
 import { db } from "@/pages/api/firebaseconfig";
-import { Button, Flex, Input, Text } from "@chakra-ui/react";
+import {
+  Button,
+  Flex,
+  Input,
+  Text,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+  useToast,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
+} from "@chakra-ui/react";
 import { arrayUnion } from "firebase/firestore";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import NavBar from "../navbar";
-import Comp from "./comp";
 
 const Prompt = () => {
   const [ques, setQues] = useState("");
@@ -12,6 +31,13 @@ const Prompt = () => {
   const [rows, setRows] = useState([]);
   const [num, setNum] = useState(0);
   const [numDelete, setNumDelete] = useState(0);
+  const [one, setOne] = useState("");
+  const [two, setTwo] = useState("");
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const toast = useToast();
+  const [isOpen2, setIsOpen2] = useState(false);
+  const onClose2 = () => setIsOpen2(false);
+  const cancelRef = useRef();
 
   useEffect(() => {
     db.collection("users")
@@ -52,6 +78,9 @@ const Prompt = () => {
                         colorScheme={"blue"}
                         onClick={() => {
                           setNum(JSON.parse(data.prompts).length - 1 - i);
+                          setOne(element[0]);
+                          setTwo(element[1]);
+                          onOpen();
                         }}
                       >
                         Edit
@@ -60,6 +89,9 @@ const Prompt = () => {
                         colorScheme={"red"}
                         onClick={() => {
                           setNumDelete(JSON.parse(data.prompts).length - 1 - i);
+                          setOne(element[0]);
+                          setTwo(element[1]);
+                          setIsOpen2(true);
                         }}
                       >
                         Delete
@@ -71,6 +103,68 @@ const Prompt = () => {
           });
       });
   }, [db]);
+
+  const editIt = (e) => {
+    e.preventDefault();
+    db.collection("users")
+      .doc(localStorage.getItem("id"))
+      .get()
+      .then((val) => {
+        db.collection("companies")
+          .doc(val.get("isActive"))
+          .onSnapshot((snap) => {
+            let data = snap.data();
+            let orr = JSON.parse(data.prompts);
+            orr[num] = [one, two];
+            db.collection("companies")
+              .doc(val.get("isActive"))
+              .update({ prompts: JSON.stringify(orr) });
+            toast({
+              title: "Edited prompt #" + String(num),
+              status: "success",
+              duration: 3000,
+              isClosable: true,
+            });
+            onClose();
+          });
+      });
+  };
+
+  const deleteIt = (e) => {
+    e.preventDefault();
+    db.collection("users")
+      .doc(localStorage.getItem("id"))
+      .get()
+      .then((val) => {
+        db.collection("companies")
+          .doc(val.get("isActive"))
+          .get()
+          .then((valo) => {
+            let array = JSON.parse(valo.get("prompts"));
+            if (array.length > 5) {
+              array.splice(num, 1);
+              db.collection("companies")
+                .doc(val.get("isActive"))
+                .update({ prompts: JSON.stringify(array) });
+              toast({
+                title: "Deleted successfully...",
+                status: "success",
+                duration: 3000,
+                isClosable: true,
+              });
+              onClose2();
+              return;
+            } else {
+              toast({
+                title: "You have to have at least 5 prompts.",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+              });
+            }
+          });
+      });
+  };
 
   const addIt = (e) => {
     e.preventDefault();
@@ -88,12 +182,28 @@ const Prompt = () => {
               db.collection("companies")
                 .doc(val.get("isActive"))
                 .update({ prompts: JSON.stringify(arr) });
+              setQues("");
+              setAns("");
+              toast({
+                title: "Added successfully...",
+                status: "success",
+                isClosable: true,
+                duration: 3000,
+              });
             } else {
               let arr = [];
               arr.push([ques, ans]);
               db.collection("companies")
                 .doc(val.get("isActive"))
                 .update({ prompts: JSON.stringify(arr) });
+              setQues("");
+              setAns("");
+              toast({
+                title: "Added successfully...",
+                status: "success",
+                isClosable: true,
+                duration: 3000,
+              });
             }
           });
       });
@@ -106,6 +216,79 @@ const Prompt = () => {
       height={"100vh"}
       backgroundColor={"#F2F7FF"}
     >
+      <AlertDialog
+        isOpen={isOpen2}
+        leastDestructiveRef={cancelRef}
+        onClose={onClose2}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Delete Item
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              Are you sure you want to delete:{" "}
+              <b>
+                <br />
+                <br />
+                {one} {two}
+                <br />
+                <br />
+              </b>
+              This action cannot be undone.
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={onClose2}>
+                Cancel
+              </Button>
+              <Button colorScheme="red" onClick={(e) => deleteIt(e)} ml={3}>
+                Delete
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Change Prompt</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <form onSubmit={(e) => editIt(e)}>
+              <Flex
+                direction={"column"}
+                alignItems={"center"}
+                gap={5}
+                width={"100%"}
+              >
+                <Flex direction={"column"} alignItems={"left"} width={"100%"}>
+                  <Text>Question</Text>
+                  <Input value={one} onChange={(e) => setOne(e.target.value)} />
+                </Flex>
+                <Flex direction={"column"} alignItems={"left"} width={"100%"}>
+                  <Text>Answer</Text>
+                  <Input value={two} onChange={(e) => setTwo(e.target.value)} />
+                </Flex>
+                <Flex
+                  direction={"row"}
+                  alignItems={"center"}
+                  justifyContent={"center"}
+                  gap={3}
+                >
+                  <Button colorScheme={"blue"} onClick={onClose}>
+                    Cancel
+                  </Button>
+                  <Button colorScheme={"green"} type={"submit"}>
+                    Change Prompt
+                  </Button>
+                </Flex>
+              </Flex>
+            </form>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
       {NavBar("Prompts")}
       <Flex
         direction={"column"}
