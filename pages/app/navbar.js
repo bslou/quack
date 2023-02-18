@@ -73,7 +73,7 @@ const NavBar = (name) => {
               engagement: "Unknown",
               display: "yes",
               devices: "Both on desktop and mobile devices",
-              bgcolor: "#ff0000",
+              bgcolor: "#0020ff",
               username: "Jack",
               widgetpos: "right",
               buttonlabel: "yes",
