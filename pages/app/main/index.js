@@ -19,10 +19,18 @@ import {
   ModalBody,
   ModalCloseButton,
   Link,
+  AlertDialog,
+  AlertDialogOverlay,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogBody,
+  AlertDialogFooter,
+  useToast,
 } from "@chakra-ui/react";
+import { arrayRemove } from "firebase/firestore";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import NavBar from "../navbar";
 
 const Main = () => {
@@ -31,6 +39,11 @@ const Main = () => {
   const [name, setName] = useState("");
   const [nom, setNom] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isOpen2, setIsOpen2] = useState(false);
+  const onClose2 = () => setIsOpen2(false);
+  const cancelRef = useRef();
+
+  const toast = useToast();
 
   useEffect(() => {
     db.collection("users")
@@ -133,7 +146,15 @@ const Main = () => {
                           >
                             Edit {valo.data().name}
                           </MenuItem>
-                          <MenuItem>Delete {valo.data().name}</MenuItem>
+                          <MenuItem
+                            onClick={() => {
+                              setNom(element);
+                              setName(valo.data().name);
+                              setIsOpen2(true);
+                            }}
+                          >
+                            Delete {valo.data().name}
+                          </MenuItem>
                         </MenuList>
                       </Menu>
                     </Flex>
@@ -144,6 +165,82 @@ const Main = () => {
         });
       });
   }, [db]);
+
+  const deleteIt = (e) => {
+    e.preventDefault();
+    db.collection("users")
+      .doc(localStorage.getItem("id"))
+      .get()
+      .then((val) => {
+        if (val.get("companies").length == 1) {
+          db.collection("companies").doc(val.get("isActive")).delete();
+          db.collection("users")
+            .doc(localStorage.getItem("id"))
+            .update({ companies: arrayRemove(val.get("isActive")) })
+            .then((vg) => {
+              db.collection("users")
+                .doc(localStorage.getItem("id"))
+                .update({ isActive: "" })
+                .then((gg) => {
+                  toast({
+                    title: "Deleted company successfully...",
+                    isClosable: true,
+                    duration: 3000,
+                    status: "success",
+                  });
+                  window.location.reload();
+                });
+            });
+        } else {
+          if (
+            val.get("companies").indexOf(val.get("isActive")) >=
+            val.get("companies").length - 1
+          ) {
+            db.collection("companies").doc(val.get("isActive")).delete();
+            db.collection("users")
+              .doc(localStorage.getItem("id"))
+              .update({ companies: arrayRemove(val.get("isActive")) })
+              .then((vg) => {
+                db.collection("users")
+                  .doc(localStorage.getItem("id"))
+                  .update({
+                    isActive:
+                      val.get("companies")[val.get("companies").length - 1],
+                  })
+                  .then((gg) => {
+                    toast({
+                      title: "Deleted company successfully...",
+                      isClosable: true,
+                      duration: 3000,
+                      status: "success",
+                    });
+                    window.location.reload();
+                  });
+              });
+          } else {
+            let n = val.get("companies").indexOf(val.get("isActive"));
+            db.collection("companies").doc(val.get("isActive")).delete();
+            db.collection("users")
+              .doc(localStorage.getItem("id"))
+              .update({ companies: arrayRemove(val.get("isActive")) })
+              .then((vg) => {
+                db.collection("users")
+                  .doc(localStorage.getItem("id"))
+                  .update({ isActive: val.get("companies")[n] })
+                  .then((gg) => {
+                    window.location.reload();
+                    toast({
+                      title: "Deleted company successfully...",
+                      isClosable: true,
+                      duration: 3000,
+                      status: "success",
+                    });
+                  });
+              });
+          }
+        }
+      });
+  };
   return (
     <Flex
       direction={"row"}
@@ -152,6 +249,40 @@ const Main = () => {
       height={"100vh"}
       backgroundColor={"#F2F7FF"}
     >
+      <AlertDialog
+        isOpen={isOpen2}
+        leastDestructiveRef={cancelRef}
+        onClose={onClose2}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Delete Item
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              Are you sure you want to delete the company:{" "}
+              <b>
+                <br />
+                <br />
+                {name}
+                <br />
+                <br />
+              </b>
+              This action cannot be undone.
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={onClose2}>
+                Cancel
+              </Button>
+              <Button colorScheme="red" onClick={(e) => deleteIt(e)} ml={3}>
+                Delete
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>

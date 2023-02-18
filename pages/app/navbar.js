@@ -76,7 +76,7 @@ const NavBar = (name) => {
               bgcolor: "#ff0000",
               username: "Jack",
               widgetpos: "right",
-              buttonlabel: "no",
+              buttonlabel: "yes",
               labeltext: "Welcome",
               widgetsounds: "no",
               brandlogo: "",
@@ -87,14 +87,18 @@ const NavBar = (name) => {
             .then((vo) => {
               db.collection("users")
                 .doc(localStorage.getItem("id"))
-                .update({ companies: arrayUnion(vo.id) });
-              db.collection("users")
-                .doc(localStorage.getItem("id"))
-                .update({ isActive: vo.id });
+                .update({ companies: arrayUnion(vo.id) })
+                .then((go) => {
+                  db.collection("users")
+                    .doc(localStorage.getItem("id"))
+                    .update({ isActive: vo.id })
+                    .then((jo) => {
+                      window.location.reload();
+                    });
+                });
             });
           setNom("");
           onClose();
-          window.location.reload();
         } else {
           toast({
             title: "Company name already exists within your companies",

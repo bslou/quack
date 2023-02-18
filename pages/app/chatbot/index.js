@@ -41,7 +41,7 @@ const Chatbot = () => {
   const [bgcolor, setBgcolor] = useState("ff0000");
   const [sound, setSound] = useState(false);
 
-  const [open, setOpen] = useState(false);
+  const [it, setIt] = useState(false);
 
   const toast = useToast();
 
@@ -303,6 +303,7 @@ const Chatbot = () => {
                 justifyContent={"center"}
                 width={"100%"}
                 height={9}
+                marginBottom={7}
               >
                 <Text width={"30%"} required>
                   Label Text:
@@ -316,7 +317,7 @@ const Chatbot = () => {
                 />
               </Flex>
             ) : null}
-            <Flex
+            {/* <Flex
               direction={"row"}
               alignItems={"center"}
               justifyContent={"center"}
@@ -329,7 +330,7 @@ const Chatbot = () => {
                 isChecked={sound}
                 onChange={(e) => setSound(e.target.value)}
               />
-            </Flex>
+            </Flex> */}
             <Flex
               direction={"row"}
               alignItems={"center"}
@@ -395,10 +396,12 @@ const Chatbot = () => {
         backgroundColor={"white"}
         borderRadius={3}
         boxShadow={"0 2px 5px #bcbcbc"}
+        //backgroundImage={"url('/assets/png.png')"}
+        backgroundSize={"100% 100%"}
       >
         {widget ? (
           <>
-            {label ? (
+            {!it && label ? (
               <Flex
                 backgroundColor={"white"}
                 paddingLeft={3}
@@ -418,36 +421,126 @@ const Chatbot = () => {
                 <Text color={"black"}>{lob}</Text>
               </Flex>
             ) : null}
-            <Button
-              width={75}
-              height={75}
-              position={"absolute"}
-              bottom={5}
-              right={value == "right" ? 5 : null}
-              left={value == "left" ? 5 : null}
-              borderRadius={"50%"}
-              backgroundColor={bgcolor}
-              _hover={{
-                opacity: 0.9,
-              }}
-              colorScheme={"transparent"}
-            >
-              {file !== null ? (
-                <img
-                  src={file}
-                  layout="fill"
-                  objectFit="cover"
-                  objectPosition="center"
-                />
-              ) : (
-                <Image
-                  src={"/assets/mail.png"}
-                  alt={"mail"}
-                  width={50}
-                  height={50}
-                />
-              )}
-            </Button>
+            {!it && (
+              <Button
+                width={75}
+                height={75}
+                position={"absolute"}
+                bottom={5}
+                right={value == "right" ? 5 : null}
+                left={value == "left" ? 5 : null}
+                borderRadius={"50%"}
+                backgroundColor={bgcolor}
+                _hover={{
+                  opacity: 0.7,
+                }}
+                colorScheme={"transparent"}
+                onClick={() => setIt(!it)}
+              >
+                {!it ? (
+                  file !== null ? (
+                    <img
+                      src={file}
+                      layout="fill"
+                      objectFit="cover"
+                      objectPosition="center"
+                    />
+                  ) : (
+                    <Image
+                      src={"/assets/mail.png"}
+                      alt={"mail"}
+                      width={50}
+                      height={50}
+                    />
+                  )
+                ) : (
+                  <Image
+                    src={"/assets/x.png"}
+                    alt={"Close it"}
+                    width={35}
+                    height={35}
+                  />
+                )}
+              </Button>
+            )}
+            {it ? (
+              <Flex
+                direction={"column"}
+                alignItems={"center"}
+                justifyContent={"center"}
+                width={400}
+                height={450}
+                borderRadius={8}
+                boxShadow={"0 0 10px #ababab"}
+                position={"absolute"}
+                bottom={5}
+                right={value == "right" ? 5 : null}
+                left={value == "left" ? 5 : null}
+              >
+                <Flex
+                  direction={"row"}
+                  alignItems={"center"}
+                  justifyContent={"space-between"}
+                  width={"100%"}
+                  height={"15%"}
+                  backgroundColor={bgcolor}
+                  borderTopRadius={8}
+                  paddingLeft={5}
+                  paddingRight={0.5}
+                >
+                  <Flex
+                    direction={"row"}
+                    alignItems={"center"}
+                    justifyContent={"center"}
+                    gap={3}
+                  >
+                    {file != null ? (
+                      <img src={file} alt="Logo" width={50} height={50} />
+                    ) : null}
+                    <Text color={"white"} fontWeight={700}>
+                      Chat with {name}
+                    </Text>
+                  </Flex>
+                  <Button
+                    colorScheme={"transparent"}
+                    _hover={{
+                      opacity: 0.5,
+                    }}
+                    onClick={() => setIt(!it)}
+                  >
+                    <Image
+                      src={"/assets/x.png"}
+                      alt={"Close it"}
+                      width={20}
+                      height={20}
+                    />
+                  </Button>
+                </Flex>
+                <Flex
+                  backgroundColor={"white"}
+                  direction={"column"}
+                  width={"100%"}
+                  height={"75%"}
+                ></Flex>
+                <Flex
+                  direction={"column"}
+                  width={"100%"}
+                  height={"10%"}
+                  justifyContent={"center"}
+                  borderTop={"1px solid #efefef"}
+                  backgroundColor={"white"}
+                  borderBottomRadius={5}
+                >
+                  <Input
+                    width={"100%"}
+                    height={"100%"}
+                    placeholder={"Disabled for example purposes..."}
+                    disabled
+                    border={"none"}
+                  />
+                </Flex>
+              </Flex>
+            ) : null}
           </>
         ) : null}
       </Flex>
