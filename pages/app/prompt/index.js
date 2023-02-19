@@ -156,7 +156,7 @@ const Prompt = () => {
               return;
             } else {
               toast({
-                title: "You have to have at least 5 prompts.",
+                title: "You have to have at least 3 prompts.",
                 status: "error",
                 duration: 3000,
                 isClosable: true,
