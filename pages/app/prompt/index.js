@@ -141,7 +141,7 @@ const Prompt = () => {
           .get()
           .then((valo) => {
             let array = JSON.parse(valo.get("prompts"));
-            if (array.length > 5) {
+            if (array.length > 3) {
               array.splice(num, 1);
               db.collection("companies")
                 .doc(val.get("isActive"))
@@ -300,8 +300,9 @@ const Prompt = () => {
         left={65}
       >
         <Text color={"red"} width={"50%"} textAlign={"center"}>
-          * You have to have at least 5 prompts, we recommend having over 100
-          ("I do not know" prompts are also recommended for enhancing model)
+          * You have to have at least 3 prompts, we recommend having over 100
+          for enhancing AI model ("I do not know" prompts are also recommended
+          for enhancing model)
         </Text>
         <br />
 

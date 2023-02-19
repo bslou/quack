@@ -30,6 +30,13 @@ const NavBar = (name) => {
 
   const [rows, setRows] = useState([]);
 
+  const [one, setOne] = useState("");
+  const [onehalf, setOnehalf] = useState("");
+  const [two, setTwo] = useState("");
+  const [twohalf, setTwohalf] = useState("");
+  const [three, setThree] = useState("");
+  const [threehalf, setThreehalf] = useState("");
+
   useEffect(() => {
     db.collection("users")
       .doc(localStorage.getItem("id"))
@@ -80,7 +87,11 @@ const NavBar = (name) => {
               labeltext: "Welcome",
               widgetsounds: "no",
               brandlogo: "",
-              prompts: "",
+              prompts: JSON.stringify([
+                [one, onehalf],
+                [two, twohalf],
+                [three, threehalf],
+              ]),
               conversations: [],
               videos: [],
             })
@@ -131,6 +142,96 @@ const NavBar = (name) => {
                   value={nom}
                   onChange={(e) => setNom(e.target.value)}
                 />
+                <Flex
+                  direction={"column"}
+                  alignItems={"center"}
+                  width={"100%"}
+                  gap={3}
+                  marginTop={3}
+                >
+                  <Flex
+                    direction={"column"}
+                    alignItems={"left"}
+                    justifyContent={"center"}
+                    width={"100%"}
+                  >
+                    <Text>Prompts</Text>
+                    <Text fontSize={"8pt"} color={"gray"}>
+                      You must have at 3 prompts for the AI model before
+                      creating company (I don't know answers are highly
+                      preferred).
+                    </Text>
+                  </Flex>
+                  <Flex
+                    direction={"column"}
+                    alignItems={"left"}
+                    width={"100%"}
+                    gap={1}
+                  >
+                    <Flex alignItems={"center"}>
+                      <Text width={"30%"}>Question</Text>
+                      <Input
+                        required
+                        value={one}
+                        onChange={(e) => setOne(e.target.value)}
+                      />
+                    </Flex>
+                    <Flex alignItems={"center"}>
+                      <Text width={"30%"}>Answer</Text>
+                      <Input
+                        required
+                        value={onehalf}
+                        onChange={(e) => setOnehalf(e.target.value)}
+                      />
+                    </Flex>
+                  </Flex>
+                  <Flex
+                    direction={"column"}
+                    alignItems={"left"}
+                    width={"100%"}
+                    gap={1}
+                  >
+                    <Flex alignItems={"center"}>
+                      <Text width={"30%"}>Question</Text>
+                      <Input
+                        required
+                        value={two}
+                        onChange={(e) => setTwo(e.target.value)}
+                      />
+                    </Flex>
+                    <Flex alignItems={"center"}>
+                      <Text width={"30%"}>Answer</Text>
+                      <Input
+                        required
+                        value={twohalf}
+                        onChange={(e) => setTwohalf(e.target.value)}
+                      />
+                    </Flex>
+                  </Flex>
+                  <Flex
+                    direction={"column"}
+                    alignItems={"left"}
+                    width={"100%"}
+                    gap={1}
+                  >
+                    <Flex alignItems={"center"}>
+                      <Text width={"30%"}>Question</Text>
+                      <Input
+                        required
+                        value={three}
+                        onChange={(e) => setThree(e.target.value)}
+                      />
+                    </Flex>
+                    <Flex alignItems={"center"}>
+                      <Text width={"30%"}>Answer</Text>
+                      <Input
+                        required
+                        value={threehalf}
+                        onChange={(e) => setThreehalf(e.target.value)}
+                      />
+                    </Flex>
+                  </Flex>
+                </Flex>
                 <Flex
                   direction={"row"}
                   width={"100%"}
