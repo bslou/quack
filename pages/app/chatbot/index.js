@@ -521,7 +521,53 @@ const Chatbot = () => {
                   direction={"column"}
                   width={"100%"}
                   height={"75%"}
-                ></Flex>
+                  gap={3}
+                  marginTop={3}
+                  marginBottom={3}
+                >
+                  <Flex
+                    direction={"column"}
+                    width={"100%"}
+                    alignItems={"flex-end"}
+                    justifyContent={"center"}
+                  >
+                    <Flex
+                      maxWidth={"65%"}
+                      backgroundColor={"#22CD2C"}
+                      paddingTop={2}
+                      paddingBottom={2}
+                      paddingLeft={5}
+                      paddingRight={5}
+                      borderRadius={20}
+                      marginRight={3}
+                    >
+                      <Text color={"white"} fontWeight={500}>
+                        This is a test message from a person texting to chatbot
+                      </Text>
+                    </Flex>
+                  </Flex>
+                  <Flex
+                    direction={"column"}
+                    width={"100%"}
+                    alignItems={"flex-start"}
+                    justifyContent={"center"}
+                  >
+                    <Flex
+                      maxWidth={"65%"}
+                      backgroundColor={"#efefef"}
+                      paddingTop={2}
+                      paddingBottom={2}
+                      paddingLeft={5}
+                      paddingRight={5}
+                      borderRadius={20}
+                      marginLeft={3}
+                    >
+                      <Text color={"black"} fontWeight={500}>
+                        This is a test message from a robot texting to chatbot
+                      </Text>
+                    </Flex>
+                  </Flex>
+                </Flex>
                 <Flex
                   direction={"column"}
                   width={"100%"}
