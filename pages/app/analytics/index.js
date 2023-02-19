@@ -1,10 +1,38 @@
-import { Button, Flex, Select, Text, UnorderedList } from "@chakra-ui/react";
+import {
+  Button,
+  Flex,
+  Select,
+  Text,
+  UnorderedList,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+} from "@chakra-ui/react";
 import Image from "next/image";
+import { useState } from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend } from "recharts";
 import NavBar from "../navbar";
 import Comp from "./comp";
 
+/*
+ *
+ * under conversations within companies is going to be id of conversation;
+ * conversation collection and id as documentation
+ * also [messsage, timestamp, and person/robot] as array under messages;
+ * also first message date {firstMsgDate};
+ * also last message date {lastMsgDate};
+ * also id of owner {ownerId};
+ * also id of user (ex: const userId = getUserID()) {userId};
+ * also video of conversation {vid};
+ */
+
 const Analytics = () => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const data = [
     { name: "Page A", Conversations: 2400, amt: 2400 },
     { name: "Page B", Conversations: 1398, amt: 2210 },
@@ -15,6 +43,8 @@ const Analytics = () => {
     { name: "Page G", Conversations: 4300, amt: 2100 },
   ];
 
+  const [userId, setUserId] = useState("");
+
   return (
     <Flex
       direction={"row"}
@@ -23,6 +53,69 @@ const Analytics = () => {
       height={"100vh"}
       backgroundColor={"#F2F7FF"}
     >
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>User Messages: {userId}</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody marginTop={5} marginBottom={5} maxHeight={"80%"}>
+            <Flex
+              direction={"column"}
+              maxHeight={"80%"}
+              overflowY={"scroll"}
+              width={"100%"}
+              gap={3}
+            >
+              <Flex
+                direction={"column"}
+                width={"100%"}
+                alignItems={"flex-end"}
+                justifyContent={"center"}
+              >
+                <Flex
+                  maxWidth={"65%"}
+                  backgroundColor={"#22CD2C"}
+                  paddingTop={2}
+                  paddingBottom={2}
+                  paddingLeft={5}
+                  paddingRight={5}
+                  borderRadius={20}
+                >
+                  <Text color={"white"} fontWeight={500}>
+                    Welcome to Russia sir where there is lots of vodka
+                  </Text>
+                </Flex>
+              </Flex>
+              <Flex
+                direction={"column"}
+                width={"100%"}
+                alignItems={"flex-start"}
+                justifyContent={"center"}
+              >
+                <Flex
+                  maxWidth={"65%"}
+                  backgroundColor={"#efefef"}
+                  paddingTop={2}
+                  paddingBottom={2}
+                  paddingLeft={5}
+                  paddingRight={5}
+                  borderRadius={20}
+                >
+                  <Text color={"black"} fontWeight={500}>
+                    Welcome to Russia sir where there is lots of vodka
+                  </Text>
+                </Flex>
+              </Flex>
+            </Flex>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={onClose}>
+              Close
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       {NavBar("Analytics")}
       <Flex
         overflowY={"scroll"}
@@ -113,8 +206,49 @@ const Analytics = () => {
             </Flex>
             <br />
             <Flex direction={"column"} width={"100%"} gap={3}>
-              {Comp("132456", "Moderately long")}
-              {Comp("132456", "Moderately long")}
+              {/* Below is comp */}
+              <Flex
+                direction={"row"}
+                alignItems={"center"}
+                backgroundColor={"#f0f0f0"}
+                justifyContent={"space-between"}
+                paddingLeft={3}
+                paddingRight={3}
+                paddingTop={3}
+                paddingBottom={3}
+                gap={10}
+                as={"a"}
+                onClick={() => {
+                  setUserId("");
+                  onOpen();
+                }}
+                width={"100%"}
+                borderRadius={5}
+                _hover={{
+                  backgroundColor: "#e0e0e0",
+                  cursor: "pointer",
+                }}
+              >
+                <Text color={"#303030"} fontWeight={700} fontSize={"11pt"}>
+                  User ID: 132456
+                </Text>
+                <Flex direction={"row"} alignItems={"center"} gap={1}>
+                  <Text color={"#303030"} fontSize={"11pt"}>
+                    Moderately long{" "}
+                    {/* to the right is not part of time, to the left is... */}{" "}
+                    conversation
+                  </Text>
+                  <Button as={"div"} size={"auto"} colorScheme={"transparent"}>
+                    <Image
+                      src={"/assets/menu.png"}
+                      alt={"menu"}
+                      width={25}
+                      height={25}
+                    />
+                  </Button>
+                </Flex>
+              </Flex>
+              {/* Above is comp */}
             </Flex>
           </Flex>
         </Flex>
