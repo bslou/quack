@@ -1,3 +1,4 @@
+import { db } from "@/pages/api/firebaseconfig";
 import {
   Button,
   Flex,
@@ -14,7 +15,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend } from "recharts";
 import NavBar from "../navbar";
 import Comp from "./comp";
@@ -43,7 +44,89 @@ const Analytics = () => {
     { name: "Page G", Conversations: 4300, amt: 2100 },
   ];
 
+  const [ro, setRo] = useState([]);
+  const [idt, setIdt] = useState("");
+
   const [userId, setUserId] = useState("");
+
+  useEffect(() => {
+    db.collection("users")
+      .doc(localStorage.getItem("id"))
+      .get()
+      .then((valp) => {
+        if (valp.get("isActive") == "") {
+          return;
+        }
+        db.collection("companies")
+          .doc(valp.get("isActive"))
+          .get()
+          .then((val) => {
+            setRo([]);
+            val.get("conversations").forEach((element) => {
+              db.collection("conversations")
+                .doc(element)
+                .onSnapshot((snap) => {
+                  let data = snap.data();
+                  setRo((prevro) => [
+                    ...prevro,
+                    <Flex
+                      direction={"row"}
+                      alignItems={"center"}
+                      backgroundColor={"#f0f0f0"}
+                      justifyContent={"space-between"}
+                      paddingLeft={3}
+                      paddingRight={3}
+                      paddingTop={3}
+                      paddingBottom={3}
+                      gap={10}
+                      as={"a"}
+                      onClick={() => {
+                        setIdt(element);
+                        onOpen();
+                      }}
+                      width={"100%"}
+                      borderRadius={5}
+                      _hover={{
+                        backgroundColor: "#e0e0e0",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <Text
+                        color={"#303030"}
+                        fontWeight={700}
+                        fontSize={"11pt"}
+                      >
+                        User ID: {data.userId}
+                      </Text>
+                      <Flex direction={"row"} alignItems={"center"} gap={1}>
+                        <Text color={"#303030"} fontSize={"11pt"}>
+                          {data.messages.length > 14
+                            ? "Long"
+                            : data.messages.length > 6
+                            ? "Moderately long"
+                            : "Short"}
+                          conversation
+                        </Text>
+                        <Button
+                          as={"div"}
+                          size={"auto"}
+                          colorScheme={"transparent"}
+                        >
+                          <Image
+                            src={"/assets/menu.png"}
+                            alt={"menu"}
+                            width={25}
+                            height={25}
+                          />
+                        </Button>
+                      </Flex>
+                    </Flex>,
+                  ]);
+                });
+            });
+          });
+      });
+  }, [db]);
 
   return (
     <Flex
@@ -199,55 +282,35 @@ const Analytics = () => {
               <Text fontWeight={500} fontSize={"17pt"}>
                 Analyze message interactions:
               </Text>
-              <Select width={"30%"}>
-                <option>Analyze message interactions</option>
-                <option>Message videos</option>
-              </Select>
+              {/* <Select width={"30%"} onChange={(e) => setTwo(e.target.value)}>
+                <option value={1}>Analyze message interactions</option>
+                <option value={2}>Message videos</option>
+              </Select> */}
             </Flex>
             <br />
             <Flex direction={"column"} width={"100%"} gap={3}>
               {/* Below is comp */}
-              <Flex
-                direction={"row"}
-                alignItems={"center"}
-                backgroundColor={"#f0f0f0"}
-                justifyContent={"space-between"}
-                paddingLeft={3}
-                paddingRight={3}
-                paddingTop={3}
-                paddingBottom={3}
-                gap={10}
-                as={"a"}
-                onClick={() => {
-                  setUserId("");
-                  onOpen();
-                }}
-                width={"100%"}
-                borderRadius={5}
-                _hover={{
-                  backgroundColor: "#e0e0e0",
-                  cursor: "pointer",
-                }}
-              >
-                <Text color={"#303030"} fontWeight={700} fontSize={"11pt"}>
-                  User ID: 132456
-                </Text>
-                <Flex direction={"row"} alignItems={"center"} gap={1}>
-                  <Text color={"#303030"} fontSize={"11pt"}>
-                    Moderately long{" "}
-                    {/* to the right is not part of time, to the left is... */}{" "}
-                    conversation
+              {ro.length < 1 ? (
+                <Flex
+                  direction={"column"}
+                  alignItems={"center"}
+                  width={"100%"}
+                  height={"100%"}
+                  justifyContent={"center"}
+                >
+                  <Image
+                    src={"/assets/jelly.png"}
+                    alt={"Jelly"}
+                    width={300}
+                    height={300}
+                  />
+                  <Text fontSize={"25pt"} fontWeight={900}>
+                    No messages here yet...
                   </Text>
-                  <Button as={"div"} size={"auto"} colorScheme={"transparent"}>
-                    <Image
-                      src={"/assets/menu.png"}
-                      alt={"menu"}
-                      width={25}
-                      height={25}
-                    />
-                  </Button>
                 </Flex>
-              </Flex>
+              ) : (
+                ro
+              )}
               {/* Above is comp */}
             </Flex>
           </Flex>

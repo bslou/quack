@@ -36,6 +36,7 @@ const Chatbot = () => {
   const [lob, setLob] = useState("");
   const [value, setValue] = useState("right");
   const [file, setFile] = useState(null);
+  const [file2, setFile2] = useState(null);
   const [widget, setWidget] = useState(true);
   const [opt, setOpt] = useState("Both on desktop and mobile devices");
   const [bgcolor, setBgcolor] = useState("ff0000");
@@ -70,6 +71,14 @@ const Chatbot = () => {
                   setFile(url);
                 });
             }
+            if (data.avatar != "") {
+              storage
+                .ref(data.avatar)
+                .getDownloadURL()
+                .then((url) => {
+                  setFile2(url);
+                });
+            }
           });
       });
   }, [db]);
@@ -87,53 +96,128 @@ const Chatbot = () => {
             if (file != null) {
               //const url = URL.createObjectURL(file);
               const imgname = file.name;
-              if (data.brandlogo != "") {
-                storage
-                  .ref(data.brandlogo)
-                  .getDownloadURL()
-                  .then((url) => {
-                    if (file !== url) {
-                      storage
-                        .ref(`/images/${imgname}`)
-                        .put(file)
-                        .then(() => {
-                          console.log("Process was successful");
-                        })
-                        .catch((err) => {
-                          console.log("Error " + err);
-                        });
-                    }
+              const imgname2 = file2.name;
+              if (file2 != null) {
+                if (data.avatar != "") {
+                  storage
+                    .ref(data.avatar)
+                    .getDownloadURL()
+                    .then((url) => {
+                      if (file2 !== url) {
+                        storage
+                          .ref(`/images/${imgname2}`)
+                          .put(file2)
+                          .then(() => {
+                            console.log("Process was successful");
+                          })
+                          .catch((err) => {
+                            console.log("Error " + err);
+                          });
+                      }
+                    });
+                } else {
+                  storage
+                    .ref(`/images/${imgname2}`)
+                    .put(file2)
+                    .then(() => {
+                      console.log("Process was successful");
+                    })
+                    .catch((err) => {
+                      console.log("Error " + err);
+                    });
+                }
+
+                if (data.brandlogo != "") {
+                  storage
+                    .ref(data.brandlogo)
+                    .getDownloadURL()
+                    .then((url) => {
+                      if (file !== url) {
+                        storage
+                          .ref(`/images/${imgname}`)
+                          .put(file)
+                          .then(() => {
+                            console.log("Process was successful");
+                          })
+                          .catch((err) => {
+                            console.log("Error " + err);
+                          });
+                      }
+                    });
+                } else {
+                  storage
+                    .ref(`/images/${imgname}`)
+                    .put(file)
+                    .then(() => {
+                      console.log("Process was successful");
+                    })
+                    .catch((err) => {
+                      console.log("Error " + err);
+                    });
+                }
+                db.collection("companies")
+                  .doc(val.get("isActive"))
+                  .update({
+                    display: widget == true ? "yes" : "no",
+                    widgetsounds: sound == true ? "yes" : "no",
+                    bgcolor: bgcolor,
+                    devices: opt,
+                    labeltext: lob,
+                    username: name,
+                    widgetpos: value,
+                    buttonlabel: label == true ? "yes" : "no",
+                    brandlogo: `/images/${imgname}`,
+                    avatar: `/images/${imgname2}`,
                   });
               } else {
-                storage
-                  .ref(`/images/${imgname}`)
-                  .put(file)
-                  .then(() => {
-                    console.log("Process was successful");
-                  })
-                  .catch((err) => {
-                    console.log("Error " + err);
+                if (data.brandlogo != "") {
+                  storage
+                    .ref(data.brandlogo)
+                    .getDownloadURL()
+                    .then((url) => {
+                      if (file !== url) {
+                        storage
+                          .ref(`/images/${imgname}`)
+                          .put(file)
+                          .then(() => {
+                            console.log("Process was successful");
+                          })
+                          .catch((err) => {
+                            console.log("Error " + err);
+                          });
+                      }
+                    });
+                } else {
+                  storage
+                    .ref(`/images/${imgname}`)
+                    .put(file)
+                    .then(() => {
+                      console.log("Process was successful");
+                    })
+                    .catch((err) => {
+                      console.log("Error " + err);
+                    });
+                }
+                db.collection("companies")
+                  .doc(val.get("isActive"))
+                  .update({
+                    display: widget == true ? "yes" : "no",
+                    widgetsounds: sound == true ? "yes" : "no",
+                    bgcolor: bgcolor,
+                    devices: opt,
+                    labeltext: lob,
+                    username: name,
+                    widgetpos: value,
+                    buttonlabel: label == true ? "yes" : "no",
+                    brandlogo: `/images/${imgname}`,
+                    avatar: `/images/${imgname2}`,
                   });
               }
-              db.collection("companies")
-                .doc(val.get("isActive"))
-                .update({
-                  display: widget == true ? "yes" : "no",
-                  widgetsounds: sound == true ? "yes" : "no",
-                  bgcolor: bgcolor,
-                  devices: opt,
-                  labeltext: lob,
-                  username: name,
-                  widgetpos: value,
-                  buttonlabel: label == true ? "yes" : "no",
-                  brandlogo: `/images/${imgname}`,
-                });
             } else {
               db.collection("companies")
                 .doc(val.get("isActive"))
                 .update({
                   display: widget == true ? "yes" : "no",
-                  widgetsounds: sound == true ? "yes" : "no",
                   bgcolor: bgcolor,
                   devices: opt,
                   labeltext: lob,
@@ -154,6 +238,9 @@ const Chatbot = () => {
 
   const handleFileUpload = (e) => {
     setFile(e.target.files[0]);
+  };
+  const handleFileUpload2 = (e) => {
+    setFile2(e.target.files[0]);
   };
   return (
     <Flex
@@ -197,7 +284,8 @@ const Chatbot = () => {
             direction={"column"}
             alignItems={"center"}
             width={"100%"}
-            gap={3}
+            gap={1}
+            maxHeight={"95%"}
           >
             <Flex
               direction={"row"}
@@ -338,7 +426,6 @@ const Chatbot = () => {
               width={"100%"}
               height={16}
               paddingBottom={5}
-              borderBottom={"1px solid #efefef"}
             >
               <Text width={"30%"} marginLeft={4}>
                 Brand Logo:
@@ -366,6 +453,51 @@ const Chatbot = () => {
                   <img
                     src={
                       typeof file == "string" ? file : URL.createObjectURL(file)
+                    }
+                    alt="Selected"
+                    width={75}
+                    height={75}
+                  />
+                )}
+              </Flex>
+            </Flex>
+            <Flex
+              direction={"row"}
+              alignItems={"center"}
+              //justifyContent={"center"}
+              width={"100%"}
+              height={16}
+              paddingBottom={5}
+              borderBottom={"1px solid #efefef"}
+            >
+              <Text width={"30%"} marginLeft={4}>
+                Chat Avatar:
+              </Text>
+              <Flex alignItems="left" justifyContent="flex-start" width={"65%"}>
+                <Button
+                  as="label"
+                  size="lg"
+                  rounded="full"
+                  bg="gray.500"
+                  color="white"
+                  width={50}
+                  height={50}
+                >
+                  <AddIcon />
+                  <Input
+                    type="file"
+                    onChange={handleFileUpload2}
+                    style={{ display: "none" }}
+                    accept="image/png, image/gif, image/jpeg"
+                  />
+                </Button>
+                {console.log(typeof file2)}
+                {file2 && (
+                  <img
+                    src={
+                      typeof file2 == "string"
+                        ? file2
+                        : URL.createObjectURL(file2)
                     }
                     alt="Selected"
                     width={75}
@@ -494,8 +626,14 @@ const Chatbot = () => {
                     justifyContent={"center"}
                     gap={3}
                   >
-                    {file != null ? (
-                      <img src={file} alt="Logo" width={50} height={50} />
+                    {file2 != null ? (
+                      <img
+                        src={file2}
+                        alt="Logo"
+                        width={50}
+                        height={50}
+                        borderRadius={25}
+                      />
                     ) : null}
                     <Text color={"white"} fontWeight={700}>
                       Chat with {name}

@@ -87,6 +87,7 @@ const NavBar = (name) => {
               labeltext: "Welcome",
               widgetsounds: "no",
               brandlogo: "",
+              avatar: "",
               prompts: JSON.stringify([
                 [one, onehalf],
                 [two, twohalf],
